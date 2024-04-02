@@ -1,189 +1,115 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 22,
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/html": [
-       "        <script type=\"text/javascript\">\n",
-       "        window.PlotlyConfig = {MathJaxConfig: 'local'};\n",
-       "        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: \"STIX-Web\"}});}\n",
-       "        if (typeof require !== 'undefined') {\n",
-       "        require.undef(\"plotly\");\n",
-       "        requirejs.config({\n",
-       "            paths: {\n",
-       "                'plotly': ['https://cdn.plot.ly/plotly-2.12.1.min']\n",
-       "            }\n",
-       "        });\n",
-       "        require(['plotly'], function(Plotly) {\n",
-       "            window._Plotly = Plotly;\n",
-       "        });\n",
-       "        }\n",
-       "        </script>\n",
-       "        "
-      ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
-    },
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Dash app running on http://127.0.0.1:8050/\n"
-     ]
-    },
-    {
-     "data": {
-      "application/javascript": "window.open('http://127.0.0.1:8050/')",
-      "text/plain": [
-       "<IPython.core.display.Javascript object>"
-      ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
-    }
-   ],
-   "source": [
-    "# ! pip install dash_bootstrap_components\n",
-    "\n",
-    "# import dependencies\n",
-    "import dash_bootstrap_components as dbc\n",
-    "import dash\n",
-    "from dash import Dash, dcc, html, Input, Output\n",
-    "import plotly.express as px\n",
-    "import pandas as pd\n",
-    "from plotly.offline import init_notebook_mode, iplot, plot\n",
-    "import plotly as py\n",
-    "init_notebook_mode(connected=True)\n",
-    "import plotly.graph_objs as go\n",
-    "\n",
-    "navbar = dbc.NavbarSimple(\n",
-    "    children=[\n",
-    "        dbc.NavItem(dbc.NavLink(\"Page 1\", href=\"#\")),\n",
-    "        dbc.DropdownMenu(\n",
-    "            children=[\n",
-    "                dbc.DropdownMenuItem(\"More pages\", header=True),\n",
-    "                dbc.DropdownMenuItem(\"Page 2\", href=\"#\"),\n",
-    "                dbc.DropdownMenuItem(\"Page 3\", href=\"#\"),\n",
-    "            ],\n",
-    "            nav=True,\n",
-    "            in_navbar=True,\n",
-    "            label=\"More\",\n",
-    "        ),\n",
-    "    ],\n",
-    "    brand=\"NavbarSimple\",\n",
-    "    brand_href=\"#\",\n",
-    "    color=\"primary\",\n",
-    "    dark=True,\n",
-    ")\n",
-    "\n",
-    "# load the movies dataset into a pandas dataframe\n",
-    "df = pd.read_csv(\"data.csv\")\n",
-    "df_topMovies = df.sort_values(by='gross', ascending=False)[:50]\n",
-    "\n",
-    "# Get unique genres for dropdown options\n",
-    "df_genres = [{'label': genres, 'value': genres} for genres in df['genre'].unique()]\n",
-    "df_genres.insert(0, {'label': 'All', 'value': 'All'});\n",
-    "\n",
-    "# Update line plot using plotly.express when callback is being used\n",
-    "def update_graph(selected_genre, selected_years):\n",
-    "    filtered_df = df\n",
-    "    if selected_genre != 'All':\n",
-    "        filtered_df = filtered_df[filtered_df['genre'] == selected_genre]\n",
-    "    filtered_df = filtered_df[filtered_df.year >= selected_years[0]]\n",
-    "    filtered_df = filtered_df[filtered_df.year <= selected_years[1]]\n",
-    "    df_topMovies = filtered_df.sort_values(by='gross', ascending=False)[:50]\n",
-    "    trace1 = go.Bar(\n",
-    "                x = df_topMovies['name'],\n",
-    "                y = df_topMovies['gross'],\n",
-    "                name = \"Top Grossing Movies\",\n",
-    "                marker = dict(color = 'rgba(255, 174, 255, 0.5)',\n",
-    "                             line=dict(color='rgb(0,0,0)',width=1.5)),\n",
-    "                text = df_topMovies['genre'] + \" \" + (df_topMovies['rating']))\n",
-    "    data = [trace1]\n",
-    "    layout = go.Layout(barmode = \"group\")\n",
-    "    fig = go.Figure(data = data, layout = layout)\n",
-    "    return fig\n",
-    "\n",
-    "# create trace1 \n",
-    "trace1 = go.Bar(\n",
-    "                x = df_topMovies['name'],\n",
-    "                y = df_topMovies['gross'],\n",
-    "                name = \"Top Grossing Movies\",\n",
-    "                marker = dict(color = 'rgba(255, 174, 255, 0.5)',\n",
-    "                             line=dict(color='rgb(0,0,0)',width=1.5)),\n",
-    "                text = df_topMovies['genre'] + \" \" + (df_topMovies['rating']))\n",
-    "data = [trace1]\n",
-    "layout = go.Layout(barmode = \"group\")\n",
-    "fig = go.Figure(data = data, layout = layout)\n",
-    "\n",
-    "# initialize the app\n",
-    "app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])\n",
-    "\n",
-    "###LAYOUT###\n",
-    "# write a layout with a header 1 that \"Fruit Inventory\"\n",
-    "\n",
-    "app.layout = html.Div(children=[\n",
-    "    dbc.Container(\n",
-    "    [navbar, dash.page_container],\n",
-    "    fluid = True),\n",
-    "    dcc.RangeSlider(\n",
-    "            id='year-slider',\n",
-    "            min=int(min(df['year'])),\n",
-    "            max=int(max(df['year'])),\n",
-    "            value=[int(min(df['year'])), int(max(df['year']))],\n",
-    "            marks={str(year): str(year) if year % 2 == 0 else '' for year in range(int(min(df['year'])), int(max(df['year'])) + 1)},\n",
-    "            tooltip={\"placement\": \"bottom\", \"always_visible\": True},\n",
-    "            step=1\n",
-    "        ),\n",
-    "    dcc.RadioItems(\n",
-    "    list(df_genres),\n",
-    "    'All',\n",
-    "    id='genres-radio',\n",
-    "    inline=True,\n",
-    "    labelStyle={'padding':'3px 5px 2px 5px'},\n",
-    "    inputStyle={'margin-right':'5px'}),\n",
-    "    dcc.Graph(id = 'bar-graph', figure=fig), # add bar graph\n",
-    "])\n",
-    "\n",
-    "# Define callback for updating the graph\n",
-    "@app.callback(\n",
-    "    Output('bar-graph', 'figure'),\n",
-    "     [Input('genres-radio', 'value'),\n",
-    "     Input('year-slider', 'value')]\n",
-    ")\n",
-    "def update_graph_callback(selected_genre, selected_years):\n",
-    "    return update_graph(selected_genre, selected_years)\n",
-    "\n",
-    "# run the app using the jupyter_mode=\"tab\" parameter and debug=True\n",
-    "if __name__ == '__main__':\n",
-    "    app.run(jupyter_mode=\"tab\", debug=True)"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.8.18"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 2
-}
+# ! pip install dash_bootstrap_components
+
+# import dependencies
+import dash_bootstrap_components as dbc
+import dash
+from dash import Dash, dcc, html, Input, Output
+import plotly.express as px
+import pandas as pd
+from plotly.offline import init_notebook_mode, iplot, plot
+import plotly as py
+init_notebook_mode(connected=True)
+import plotly.graph_objs as go
+
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Page 1", href="#")),
+        dbc.DropdownMenu(
+            children=[
+                dbc.DropdownMenuItem("More pages", header=True),
+                dbc.DropdownMenuItem("Page 2", href="#"),
+                dbc.DropdownMenuItem("Page 3", href="#"),
+            ],
+            nav=True,
+            in_navbar=True,
+            label="More",
+        ),
+    ],
+    brand="NavbarSimple",
+    brand_href="#",
+    color="primary",
+    dark=True,
+)
+
+# load the movies dataset into a pandas dataframe
+df = pd.read_csv("data.csv")
+df_topMovies = df.sort_values(by='gross', ascending=False)[:50]
+
+# Get unique genres for dropdown options
+df_genres = [{'label': genres, 'value': genres} for genres in df['genre'].unique()]
+df_genres.insert(0, {'label': 'All', 'value': 'All'});
+
+# Update line plot using plotly.express when callback is being used
+def update_graph(selected_genre, selected_years):
+    filtered_df = df
+    if selected_genre != 'All':
+        filtered_df = filtered_df[filtered_df['genre'] == selected_genre]
+    filtered_df = filtered_df[filtered_df.year >= selected_years[0]]
+    filtered_df = filtered_df[filtered_df.year <= selected_years[1]]
+    df_topMovies = filtered_df.sort_values(by='gross', ascending=False)[:50]
+    trace1 = go.Bar(
+                x = df_topMovies['name'],
+                y = df_topMovies['gross'],
+                name = "Top Grossing Movies",
+                marker = dict(color = 'rgba(255, 174, 255, 0.5)',
+                             line=dict(color='rgb(0,0,0)',width=1.5)),
+                text = df_topMovies['genre'] + " " + (df_topMovies['rating']))
+    data = [trace1]
+    layout = go.Layout(barmode = "group")
+    fig = go.Figure(data = data, layout = layout)
+    return fig
+
+# create trace1 
+trace1 = go.Bar(
+                x = df_topMovies['name'],
+                y = df_topMovies['gross'],
+                name = "Top Grossing Movies",
+                marker = dict(color = 'rgba(255, 174, 255, 0.5)',
+                             line=dict(color='rgb(0,0,0)',width=1.5)),
+                text = df_topMovies['genre'] + " " + (df_topMovies['rating']))
+data = [trace1]
+layout = go.Layout(barmode = "group")
+fig = go.Figure(data = data, layout = layout)
+
+# initialize the app
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
+
+###LAYOUT###
+# write a layout with a header 1 that "Fruit Inventory"
+
+app.layout = html.Div(children=[
+    dbc.Container(
+    [navbar, dash.page_container],
+    fluid = True),
+    dcc.RangeSlider(
+            id='year-slider',
+            min=int(min(df['year'])),
+            max=int(max(df['year'])),
+            value=[int(min(df['year'])), int(max(df['year']))],
+            marks={str(year): str(year) if year % 2 == 0 else '' for year in range(int(min(df['year'])), int(max(df['year'])) + 1)},
+            tooltip={"placement": "bottom", "always_visible": True},
+            step=1
+        ),
+    dcc.RadioItems(
+    list(df_genres),
+    'All',
+    id='genres-radio',
+    inline=True,
+    labelStyle={'padding':'3px 5px 2px 5px'},
+    inputStyle={'margin-right':'5px'}),
+    dcc.Graph(id = 'bar-graph', figure=fig), # add bar graph
+])
+
+# Define callback for updating the graph
+@app.callback(
+    Output('bar-graph', 'figure'),
+     [Input('genres-radio', 'value'),
+     Input('year-slider', 'value')]
+)
+def update_graph_callback(selected_genre, selected_years):
+    return update_graph(selected_genre, selected_years)
+
+# run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)
