@@ -8,7 +8,6 @@ import plotly.express as px
 import pandas as pd
 from plotly.offline import init_notebook_mode, plot
 import plotly as py
-init_notebook_mode(connected=True)
 import plotly.graph_objs as go
 
 navbar = dbc.NavbarSimple(
