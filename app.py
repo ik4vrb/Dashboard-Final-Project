@@ -10,6 +10,7 @@ from plotly.offline import init_notebook_mode, plot
 import plotly as py
 import plotly.graph_objs as go
 
+# implement navbar with dropdowns and header
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Page 1", href="#")),
@@ -24,7 +25,7 @@ navbar = dbc.NavbarSimple(
             label="More",
         ),
     ],
-    brand="NavbarSimple",
+    brand="Movie Data Viewer",
     brand_href="#",
     color="primary",
     dark=True,
@@ -58,14 +59,15 @@ def update_graph(selected_genre, selected_years):
     fig = go.Figure(data = data, layout = layout)
     return fig
 
-# create trace1 
+# create trace1 to make a bar graph
 trace1 = go.Bar(
                 x = df_topMovies['name'],
                 y = df_topMovies['gross'],
                 name = "Top Grossing Movies",
                 marker = dict(color = 'rgba(255, 174, 255, 0.5)',
                              line=dict(color='rgb(0,0,0)',width=1.5)),
-                text = df_topMovies['genre'] + " " + (df_topMovies['rating']))
+                text = df_topMovies['genre'] + " " + (df_topMovies['rating']),
+                title="Top 50 - Highest Grossing Movies")
 data = [trace1]
 layout = go.Layout(barmode = "group")
 fig = go.Figure(data = data, layout = layout)
@@ -75,8 +77,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 ###LAYOUT###
-# write a layout with a header 1 that "Fruit Inventory"
-
+# Layout defines container for nav bar, as well as a range slider, radio item selector, and a bar graph
 app.layout = html.Div(children=[
     dbc.Container(
     [navbar, dash.page_container],
@@ -100,7 +101,7 @@ app.layout = html.Div(children=[
     dcc.Graph(id = 'bar-graph', figure=fig), # add bar graph
 ])
 
-# Define callback for updating the graph
+# Define callback for updating the graph with bar graph output for radio/slider inputs
 @app.callback(
     Output('bar-graph', 'figure'),
      [Input('genres-radio', 'value'),
