@@ -66,11 +66,10 @@ trace1 = go.Bar(
                 name = "Top Grossing Movies",
                 marker = dict(color = 'rgba(255, 174, 255, 0.5)',
                              line=dict(color='rgb(0,0,0)',width=1.5)),
-                text = df_topMovies['genre'] + " " + (df_topMovies['rating']),
-                title="Top 50 - Highest Grossing Movies")
+                text = df_topMovies['genre'] + " " + (df_topMovies['rating']))
 data = [trace1]
 layout = go.Layout(barmode = "group")
-fig = go.Figure(data = data, layout = layout)
+fig = go.Figure(data = data, layout = layout, y='gross', x='movie title', title='Top 50 - Highest Grossing Movies')
 
 # initialize the app
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
