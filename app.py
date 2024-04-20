@@ -127,6 +127,7 @@ app.layout = html.Div(children=[
         page_action="native",
         page_current= 0,
         page_size= 10,
+        style_table={'overflowX': 'scroll'},
     ),
     html.Div(id='datatable-interactivity-container') # graphs created from idt callbacks will be created here
     ])
