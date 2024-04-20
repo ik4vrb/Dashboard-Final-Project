@@ -109,6 +109,7 @@ app.layout = html.Div(children=[
     ]),
     html.Div([ # initialize datatable with necessary parameters
         html.H3(children="Score and Vote Analysis with Interactive Data Table"),
+        html.H5(children="Scroll horizontally on the interactive data table to see more columns."),
         dash_table.DataTable(
         id='datatable-interactivity',
         columns=[
