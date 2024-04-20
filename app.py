@@ -30,7 +30,7 @@ navbar = dbc.NavbarSimple(
 )
 
 # load the movies dataset into a pandas dataframe
-df = pd.read_csv("data.csv")
+df = pd.read_csv("data/cleaned_data.csv")
 df_topMovies = df.sort_values(by='gross', ascending=False)[:50]
 
 # Get unique genres for dropdown options
