@@ -273,5 +273,5 @@ def update_graphs(rows, derived_virtual_selected_rows):
 
 # run the app
 if __name__ == '__main__':
-    # app.run_server(debug=True)
-    app.run(jupyter_mode='tab', debug=True)
+    app.run_server(debug=True)
+    # app.run(jupyter_mode='tab', debug=True)
