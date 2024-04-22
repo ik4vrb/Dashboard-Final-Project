@@ -77,12 +77,12 @@ server = app.server
 
 ###LAYOUT###
 # Layout defines container for nav bar, as well as a range slider, radio item selector, bar/line graph, and interactive data table
-app.layout = html.Div(children=[
+app.layout = html.Div(id='top-div', children=[
     dbc.Container(
     [navbar, dash.page_container],
     fluid = True),
-    html.Div([
-    html.H3(children="Timeline"),
+    html.Div(id='timeline-container', children=[
+    html.H3(id='timeline-header', children="Timeline"),
     dcc.RangeSlider(
             id='year-slider',
             min=int(min(df['year'])),
@@ -97,9 +97,7 @@ app.layout = html.Div(children=[
     list(df_genres),
     'All',
     id='genres-radio',
-    inline=True,
-    labelStyle={'padding':'3px 5px 2px 5px'},
-    inputStyle={'margin-right':'5px'}),
+    inline=True),
     html.H3(children="Graph of Highest Grossing Movies"),
     html.H5(children="You can select the graph type for this from the top-right dropdown."),
     html.Div(id='graph-container', children=[
@@ -107,7 +105,7 @@ app.layout = html.Div(children=[
         ]), # dcc.Graph(id = 'bar-graph', figure=fig), # add bar/line graph
     dcc.Store(id='graph-type-store', data='bar')  # Store the graph type
     ]),
-    html.Div([ # initialize datatable with necessary parameters
+    html.Div(id='datatable-container', children=[ # initialize datatable with necessary parameters
         html.H3(children="Score and Vote Analysis with Interactive Data Table"),
         html.H5(children="Scroll horizontally on the interactive data table to see more columns."),
         dash_table.DataTable(
@@ -275,4 +273,5 @@ def update_graphs(rows, derived_virtual_selected_rows):
 
 # run the app
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    # app.run_server(debug=True)
+    app.run(jupyter_mode='tab', debug=True)
