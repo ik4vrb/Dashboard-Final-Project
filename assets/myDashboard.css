@@ -1,0 +1,34 @@
+#top-div .container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#timeline-container, #datatable-container {
+    padding: 5px 10px;
+}
+
+#top-div h3 {
+    margin-top: 15px;
+    border-top: 2px solid #333399;
+}
+
+#top-div #timeline-header {
+    margin-top: 5px;
+    border-top: none;
+}
+
+#genres-radio input {
+    /*min-width: 100px;
+    background-color: #EEFFEE;*/
+    padding: 3px 5px 2px 5px;
+    margin-right: 5px;
+}
+
+#genres-radio label {
+    /*background-color: #EEFFEE;*/
+    padding-right: 15px;
+}
+
+#year-slider {
+    margin-bottom: 15px;
+}
