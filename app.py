@@ -82,6 +82,7 @@ app.layout = html.Div(id='top-div', children=[
     [navbar, dash.page_container],
     fluid = True),
     html.Div(id='timeline-container', children=[
+    html.H5(children="About: This dashboard enables the user to study the profitability and popularity of movies, and these two objectives are explored with two advanced graphs below respectively."),
     html.H3(id='timeline-header', children="Timeline"),
     dcc.RangeSlider(
             id='year-slider',
