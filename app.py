@@ -100,7 +100,7 @@ app.layout = html.Div(id='top-div', children=[
     id='genres-radio',
     inline=True),
     html.H3(children="Graph of Highest Grossing Movies"),
-    html.H5(children="You can select the graph type for this from the top-right dropdown."),
+    html.H5(children="You can select the graph type for this from the top-right dropdown. The timeline slider and genre buttons can be used to filter the graph by time range and genre respectively."),
     html.Div(id='graph-container', children=[
             dcc.Graph(id='graph')
         ]), # dcc.Graph(id = 'bar-graph', figure=fig), # add bar/line graph
@@ -108,7 +108,7 @@ app.layout = html.Div(id='top-div', children=[
     ]),
     html.Div(id='datatable-container', children=[ # initialize datatable with necessary parameters
         html.H3(children="Score and Vote Analysis with Interactive Data Table"),
-        html.H5(children="Scroll horizontally on the interactive data table to see more columns."),
+        html.H5(children="Scroll horizontally on the interactive data table to see more columns. Options applied to the table will be reflected upon the score and votes graphs below."),
         dash_table.DataTable(
         id='datatable-interactivity',
         columns=[
